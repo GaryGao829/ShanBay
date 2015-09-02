@@ -1,23 +1,30 @@
 package com.example.yugao.homework_try1;
 
+import java.io.IOException;
+
 /**
  * Created by yugao on 15/8/28.
  */
-//public class Findwords {
-//
-//    public String readFile(String filename) throws IOException{
-//        String res = "";
-//        try{
-//            FileInputStream filein = openFileInput(filename);
-//            int length = filein.available();
-//            byte[] buffer = new byte[length];
-//            filein.read(buffer);
-//            res = EncodingUtils.getString(buffer,"UTF-8");
-//            filein.close();
-//        }catch (Exception e){
-//            e.printStackTrace();
+public class Findwords {
+
+    public String readFile(String filename) throws IOException {
+        String res = "";
+        try{
+         //   FileReader file = new FileReader(/article)
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+//    public void selectWord(String[] wordlist,String article){
+//        int n = wordlist.length;
+//        if (n<= 0) return ;
+//        for(int i = 0;i<n;i++){
+//            article.indexOf(wordlist[i]);
 //        }
-//        return res;
 //    }
+//    TextView tv;
+//    tv.
 //
-//}
+
+}

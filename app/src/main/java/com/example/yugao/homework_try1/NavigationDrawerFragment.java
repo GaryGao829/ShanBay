@@ -22,6 +22,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.apache.http.util.EncodingUtils;
+
+import java.io.InputStream;
+
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
@@ -278,5 +282,20 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+
+    }
+
+    public String readFromAsset(String fileName) {
+        String res = "";
+        try {
+            InputStream in = getResources().getAssets().open(fileName);
+            int length = in.available();
+            byte[] buffer = new byte[length];
+            in.read(buffer);
+            res = EncodingUtils.getString(buffer, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }
