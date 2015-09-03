@@ -23,3 +23,14 @@
         tools:layout="@layout/fragment_navigation_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
+
+<!--
+1. FrameLayout(container):drawer中每个item对应的fragment容器，初试为FrameLayout,之后会在代码中被fragment取代。
+
+2. fragment(navigation_drawer):drawer抽屉
+        抽屉菜单必须使用android:layout_gravity属性设置水平的 gravity值 .如果要支持 right-to-left (RTL，从右向左阅读)语言 用 "start" 代替 "left" (当在 RTL语言运行时候，菜单出现在右侧)。
+        抽屉菜单的宽度为 dp 单位而高度和父View一样。抽屉菜单的宽度应该不超过320dp，这样用户可以在菜单打开的时候看到部分内容界面。
+
+-->
+
+
