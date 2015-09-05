@@ -58,28 +58,43 @@ public class MainActivity extends ActionBarActivity
     final String BookName1 = "raw/book1";
     final String wordList1 = "raw/wordlist1";
     public static String Book1Content;
+    Findwords findwords = new Findwords();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v(LOG_TAG, "Start onCreate");
+//        Log.v(LOG_TAG, "Start onCreate");
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        Log.v(LOG_TAG, "Before set up drawer");
+//        Log.v(LOG_TAG, "Before set up drawer");
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-        Log.v(LOG_TAG, "onCreate finished");
+//        Log.v(LOG_TAG, "onCreate finished");
         try{
              Book1Content = getString(getResources().openRawResource(R.raw.book1));
+//            Log.v(LOG_TAG, "test Findwords preprogress");
+            findwords.preProcessWordlist(getResources().openRawResource(R.raw.wordlist1));
+
+//            Log.v(LOG_TAG, String.valueOf(findwords.word1.toString()));
+//            Log.v("allword 大小"," "+ findwords.allword.length);
+//            Log.v("难度为0单词个数", " "+findwords.word0.size());
+//            Log.v("难度为1单词个数", " "+findwords.word1.size());
+//            Log.v("难度为2单词个数", " "+findwords.word2.size());
+//            Log.v("难度为3单词个数", " "+findwords.word3.size());
+//            Log.v("难度为4单词个数", " "+findwords.word4.size());
+//            Log.v("难度为5单词个数", " "+findwords.word5.size());
+
         }catch(Exception e){
             e.printStackTrace();
         }
+
     }
     /**
      * THIS METHOD
@@ -184,7 +199,8 @@ public class MainActivity extends ActionBarActivity
             try {
                 tv = (TextView)rootView.findViewById(R.id.about_info);
                 tv.setText(MainActivity.Book1Content);
-                Log.v(LOG_TAG,"子类填充TextView成功 ");
+                Log.v(LOG_TAG, "子类填充TextView成功 ");
+
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -203,7 +219,7 @@ public class MainActivity extends ActionBarActivity
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            Log.v(LOG_TAG,"显示难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
+            Log.v(LOG_TAG, "显示难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
         }
 
         @Override
