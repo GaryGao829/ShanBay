@@ -2,6 +2,9 @@ package com.example.yugao.homework_try1;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +27,11 @@ import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks{
+
+    private MyHandler myHandler;
+    TextView tv;
+
+
     public static String getString(InputStream inputStream){
         InputStreamReader inputStreamReader = null;
         try{
@@ -78,10 +86,10 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 //        Log.v(LOG_TAG, "onCreate finished");
         try{
-             Book1Content = getString(getResources().openRawResource(R.raw.book1));
+//              Book1Content = getString(getResources().openRawResource(R.raw.book1));
 //            Log.v(LOG_TAG, "test Findwords preprogress");
-            findwords.preProcessWordlist(getResources().openRawResource(R.raw.wordlist1));
-
+//            findwords.preProcessWordlist(getResources().openRawResource(R.raw.wordlist1));
+//            Log.v("单词总个数"," "+ findwords.word5.size());
 //            Log.v(LOG_TAG, String.valueOf(findwords.word1.toString()));
 //            Log.v("allword 大小"," "+ findwords.allword.length);
 //            Log.v("难度为0单词个数", " "+findwords.word0.size());
@@ -94,6 +102,10 @@ public class MainActivity extends ActionBarActivity
         }catch(Exception e){
             e.printStackTrace();
         }
+        myHandler = new MyHandler();
+        MyThread myThread = new MyThread();
+        new Thread(myThread).start();
+
 
     }
     /**
@@ -107,8 +119,9 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
+        PlaceholderFragment pf = new PlaceholderFragment();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position+1))
+                .replace(R.id.container, pf.newInstance(position+1))
                 .commit();
 
         //PlaceholderFragment pf = PlaceholderFragment.newInstance(position + 1 ); //这句暂时没用
@@ -120,6 +133,7 @@ public class MainActivity extends ActionBarActivity
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
+
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
@@ -166,8 +180,7 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public static class PlaceholderFragment extends Fragment implements SeekBar.OnSeekBarChangeListener{
-        private TextView tv;
+    class PlaceholderFragment extends Fragment implements SeekBar.OnSeekBarChangeListener{
         private SeekBar seekbar;
 
         /**
@@ -180,12 +193,11 @@ public class MainActivity extends ActionBarActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) { //
+        public PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);//
-
+            fragment.setArguments(args);
             return fragment;
         }
 
@@ -196,16 +208,20 @@ public class MainActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            try {
-                tv = (TextView)rootView.findViewById(R.id.about_info);
-                tv.setText(MainActivity.Book1Content);
-                Log.v(LOG_TAG, "子类填充TextView成功 ");
+            //应该把耗时的任务移出Main UI
+//            try {
+//                tv = (TextView)rootView.findViewById(R.id.about_info);
+//                tv.setText(MainActivity.Book1Content);
+//                Log.v(LOG_TAG, "子类填充TextView成功 ");
+//
+//            }catch(Exception e){
+//                e.printStackTrace();
+//            }
 
-            }catch(Exception e){
-                e.printStackTrace();
-            }
             seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
             seekbar.setOnSeekBarChangeListener(this);
+            tv = (TextView)rootView.findViewById(R.id.about_info);
+
             return rootView;
         }
 
@@ -214,6 +230,7 @@ public class MainActivity extends ActionBarActivity
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
+
         }
 
 
@@ -231,6 +248,42 @@ public class MainActivity extends ActionBarActivity
         public void onStopTrackingTouch(SeekBar seekBar) {
 
         }
+
+
     }
+    class MyHandler extends Handler {
+        public MyHandler(){
+        }
+        public MyHandler(Looper L){
+            super(L);
+        }
+        public void handleMessage (Message msg){
+            super.handleMessage(msg);
+            Bundle b = msg.getData();
+
+            MainActivity.this.tv.setText(b.getString("BookContent"));
+        }
+    }
+
+    class MyThread implements Runnable{
+
+        @Override
+        public void run() {
+            try{
+                Log.v(this.getClass().toString(),"try to get Book content ");
+                Book1Content = MainActivity.getString(getResources().openRawResource(R.raw.book1));
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putString("BookContent",Book1Content);
+            msg.setData(b);
+            MainActivity.this.myHandler.sendMessage(msg);
+        }
+    }
+
+
 
 }

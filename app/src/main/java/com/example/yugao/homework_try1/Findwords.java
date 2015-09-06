@@ -1,7 +1,5 @@
 package com.example.yugao.homework_try1;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,10 +31,10 @@ public class Findwords {
         String[] linesplit;
         try{
             while((line = reader.readLine())!=""){
-                Log.v("wordlist every line ",line);
+              //  Log.v("wordlist every line ",line);
                 linesplit = line.split("\t");
-                Log.v("linesplie[0] is ",linesplit[0]);
-                Log.v("linesplie[1] is ",linesplit[1]);
+              //  Log.v("linesplie[0] is ",linesplit[0]);
+              //  Log.v("linesplie[1] is ",linesplit[1]);
 
                 switch (linesplit[1] ){
                     case "0":{
@@ -49,7 +47,7 @@ public class Findwords {
                     case "4":allword[4].add(linesplit[0]);
                     case "5":allword[5].add(linesplit[0]);
                     default:{
-                        Log.v("wordlist","wordlist read error"+line);
+                        //Log.v("wordlist","wordlist read error "+line);
 
                     }
                 }
