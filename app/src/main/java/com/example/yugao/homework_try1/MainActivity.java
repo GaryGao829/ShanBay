@@ -30,6 +30,7 @@ public class MainActivity extends ActionBarActivity
 
     private MyHandler myHandler;
     TextView tv;
+    String Book1Content = "oops";
 
 
     public static String getString(InputStream inputStream){
@@ -65,7 +66,6 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
     final String BookName1 = "raw/book1";
     final String wordList1 = "raw/wordlist1";
-    public static String Book1Content;
     Findwords findwords = new Findwords();
 
     @Override
@@ -118,15 +118,23 @@ public class MainActivity extends ActionBarActivity
 
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        Log.v(LOG_TAG,"Before onNavigationDrawerItemSelected run");
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         PlaceholderFragment pf = new PlaceholderFragment();
+
         fragmentManager.beginTransaction()
-                .replace(R.id.container, pf.newInstance(position+1))
+               .replace(R.id.container, pf.newInstance(position+1))
                 .commit();
-
-        //PlaceholderFragment pf = PlaceholderFragment.newInstance(position + 1 ); //这句暂时没用
-
+        Log.v(LOG_TAG,"onNavigationDrawerItemSelected run");
+//        try{
+//            if(position == 0) tv.setText(Book1Content);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+        Log.v(LOG_TAG,"position nvalue is " + position);
         Log.v(LOG_TAG,"begin transaction go");
+
     }
 
     public void onSectionAttached(int number) {
@@ -182,7 +190,7 @@ public class MainActivity extends ActionBarActivity
 
     class PlaceholderFragment extends Fragment implements SeekBar.OnSeekBarChangeListener{
         private SeekBar seekbar;
-
+        private static final String arguments = "test";
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -194,9 +202,18 @@ public class MainActivity extends ActionBarActivity
          * number.
          */
         public PlaceholderFragment newInstance(int sectionNumber) {
+            Log.v(getClass().toString(),"PlaceholderFragment.newInstance");
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+
+            args.putString(arguments,"Section test"+sectionNumber);
+            if(sectionNumber == 1){
+                args.putString(arguments,Book1Content);
+                //MyThread myThread = new MyThread();
+                //new Thread(myThread).start();
+
+            }
             fragment.setArguments(args);
             return fragment;
         }
@@ -208,7 +225,7 @@ public class MainActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            //应该把耗时的任务移出Main UI
+            //把耗时的任务移出Main UI
 //            try {
 //                tv = (TextView)rootView.findViewById(R.id.about_info);
 //                tv.setText(MainActivity.Book1Content);
@@ -221,7 +238,10 @@ public class MainActivity extends ActionBarActivity
             seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
             seekbar.setOnSeekBarChangeListener(this);
             tv = (TextView)rootView.findViewById(R.id.about_info);
-
+            //tv.setText(savedInstanceState.getString(arguments));
+//            if(getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
+            tv.setText(getArguments().getString(arguments));
+//            }
             return rootView;
         }
 
@@ -261,7 +281,7 @@ public class MainActivity extends ActionBarActivity
             super.handleMessage(msg);
             Bundle b = msg.getData();
 
-            MainActivity.this.tv.setText(b.getString("BookContent"));
+            //MainActivity.this.tv.setText(b.getString("BookContent"));
         }
     }
 
