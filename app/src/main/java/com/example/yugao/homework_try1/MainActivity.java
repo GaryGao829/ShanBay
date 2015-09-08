@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,13 +25,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks{
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private MyHandler myHandler;
     TextView tv;
     String Book1Content = "oops";
+    SpannableStringBuilder[] ssbArray = new SpannableStringBuilder[6];
+    ObservableScrollView sv;
 
 
     public static String getString(InputStream inputStream){
@@ -58,6 +62,7 @@ public class MainActivity extends ActionBarActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
+
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     /**
@@ -77,15 +82,14 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
-//        Log.v(LOG_TAG, "Before set up drawer");
+        //        Log.v(LOG_TAG, "Before set up drawer");
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 //        Log.v(LOG_TAG, "onCreate finished");
-        try{
+//        try{
 //              Book1Content = getString(getResources().openRawResource(R.raw.book1));
 //            Log.v(LOG_TAG, "test Findwords preprogress");
 //            findwords.preProcessWordlist(getResources().openRawResource(R.raw.wordlist1));
@@ -98,10 +102,13 @@ public class MainActivity extends ActionBarActivity
 //            Log.v("难度为3单词个数", " "+findwords.word3.size());
 //            Log.v("难度为4单词个数", " "+findwords.word4.size());
 //            Log.v("难度为5单词个数", " "+findwords.word5.size());
+//
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
 
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+
+
         myHandler = new MyHandler();
         MyThread myThread = new MyThread();
         new Thread(myThread).start();
@@ -141,7 +148,6 @@ public class MainActivity extends ActionBarActivity
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
-
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
@@ -188,7 +194,9 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    class PlaceholderFragment extends Fragment implements SeekBar.OnSeekBarChangeListener{
+
+
+    class PlaceholderFragment extends Fragment implements SeekBar.OnSeekBarChangeListener,ScrollViewListener{
         private SeekBar seekbar;
         private static final String arguments = "test";
         /**
@@ -238,9 +246,18 @@ public class MainActivity extends ActionBarActivity
             seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
             seekbar.setOnSeekBarChangeListener(this);
             tv = (TextView)rootView.findViewById(R.id.about_info);
+            //tv.setMovementMethod(ScrollingMovementMethod.getInstance());
+
             //tv.setText(savedInstanceState.getString(arguments));
 //            if(getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
             tv.setText(getArguments().getString(arguments));
+
+            sv = (ObservableScrollView)rootView.findViewById(R.id.scrollView);
+            sv.setScrollViewListener(this);
+
+
+
+
 //            }
             return rootView;
         }
@@ -256,7 +273,11 @@ public class MainActivity extends ActionBarActivity
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            Log.v(LOG_TAG, "显示难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
+            //Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
+            tv.setText(ssbArray[seekBar.getProgress()]);
+            //Log.v(getClass().toString(),ssbArray[seekBar.getProgress()].toString());
+            //tv.setText(""+seekBar.getProgress());
+
         }
 
         @Override
@@ -270,6 +291,16 @@ public class MainActivity extends ActionBarActivity
         }
 
 
+        @Override
+        public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+            if(scrollView == sv){
+
+                Log.v(getClass().toString(),"old coord x "+x + "old coord y "+y);
+                Log.v(getClass().toString(),"total y value " + scrollView.getMaxScrollAmount() );
+                Log.v(getClass().toString(),"current percent " + y / scrollView.getMaxScrollAmount()+"%" );
+
+            }
+        }
     }
     class MyHandler extends Handler {
         public MyHandler(){
@@ -282,6 +313,8 @@ public class MainActivity extends ActionBarActivity
             Bundle b = msg.getData();
 
             //MainActivity.this.tv.setText(b.getString("BookContent"));
+            //MainActivity.this.tv.setText(ssbArray[0]);
+
         }
     }
 
@@ -291,19 +324,53 @@ public class MainActivity extends ActionBarActivity
         public void run() {
             try{
                 Log.v(this.getClass().toString(),"try to get Book content ");
-                Book1Content = MainActivity.getString(getResources().openRawResource(R.raw.book1));
+                InputStream Book1InputStream =  getResources().openRawResource(R.raw.book1);
+                //Book1Content = MainActivity.getString(getResources().openRawResource(R.raw.book1));
+                Book1Content = MainActivity.getString(Book1InputStream);
+                Log.v(this.getClass().toString(), "子线程加载文本到Book1Content 完毕");
+
+
+                InputStream WordlistinputStream = getResources().openRawResource(R.raw.wordlist1);
+                //Log.v(getClass().toString(), MainActivity.getString(Book1InputStream));
+                //这样就没有输出 换成WordlistinputStream就有输出
+                //Log.v(getClass().toString(), MainActivity.getString(getResources().openRawResource(R.raw.book1)));
+
+
+
+                Log.v(this.getClass().toString(), "开始处理SpannableStringBuilder");
+                for(int i = 0;i<1;i++){
+                    ssbArray[i] = findwords.highlightByDifficulty(i,getResources().openRawResource(R.raw.book1));
+                    Log.v(getClass().toString(),"第" + i + "spannableString");
+                }
+                Log.v(getClass().toString(), "处理SpannableStringBuilder 完毕");
+//                if(ssbArray[0] != null) {
+//                    Log.v(getClass().toString(), "ssbArray[0] 的内容是 " + ssbArray[0].toString());
+//                }
 
             }catch (Exception e){
                 e.printStackTrace();
             }
+
             Message msg = new Message();
             Bundle b = new Bundle();
             b.putString("BookContent",Book1Content);
+
             msg.setData(b);
             MainActivity.this.myHandler.sendMessage(msg);
         }
     }
 
+    public ArrayList<String> DivideString(String string){
+        ArrayList<String> dividedString = new ArrayList<>();
+        while(string.length()>=5){
+            dividedString.add(string.substring(0,5));
+            string = string.substring(5,string.length());
+        }
+        if(string != "") {
+            dividedString.add(string);
+        }
+        return dividedString;
+    }
 
 
 }

@@ -1,10 +1,17 @@
 package com.example.yugao.homework_try1;
 
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by yugao on 15/8/28.
@@ -35,12 +42,11 @@ public class Findwords {
                 linesplit = line.split("\t");
               //  Log.v("linesplie[0] is ",linesplit[0]);
               //  Log.v("linesplie[1] is ",linesplit[1]);
-
+/**
+ * 因为这里没有加break 所以word5里面包括所有单词
+ */
                 switch (linesplit[1] ){
-                    case "0":{
-                        allword[0].add(linesplit[0]);
-                        //Log.v("wordlist","nan du shi 0"+ linesplit[0]);
-                    }
+                    case "0":allword[0].add(linesplit[0]);
                     case "1":allword[1].add(linesplit[0]);
                     case "2":allword[2].add(linesplit[0]);
                     case "3":allword[3].add(linesplit[0]);
@@ -48,7 +54,6 @@ public class Findwords {
                     case "5":allword[5].add(linesplit[0]);
                     default:{
                         //Log.v("wordlist","wordlist read error "+line);
-
                     }
                 }
             }
@@ -75,6 +80,24 @@ public class Findwords {
 //        }
 //        return sb.toString();
 //    }
+    public SpannableStringBuilder highlightByDifficulty(int difficulty,InputStream inputStream){
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("");
+        ArrayList<String> wordlistByCertainDifficult = allword[difficulty];
+        Scanner sc = new Scanner(inputStream,"utf-8");
+        while(sc.hasNext()){
+            String word = sc.next();
 
+            if(wordlistByCertainDifficult.contains(word)){
+                SpannableString tmp = new SpannableString(word);
+                tmp.setSpan(new BackgroundColorSpan(Color.GREEN),0,word.length(),Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.append(tmp);
+            }else {
+                SpannableString tmp = new SpannableString(word);
+                tmp.setSpan(new BackgroundColorSpan(Color.RED),0,word.length(),Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.append(tmp);
+            }
+        }
+        return spannableStringBuilder;
+    }
 
 }

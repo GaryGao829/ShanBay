@@ -14,27 +14,28 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
         android:max="6" />
-<!--
-    <ScrollView
+
+    <com.example.yugao.homework_try1.ObservableScrollView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
         android:layout_marginBottom="@dimen/abc_action_bar_progress_bar_size"
         android:layout_gravity="top"
-        android:paddingTop="20dp">
--->
+        android:paddingTop="20dp"
+        >
+
     <TextView
         android:id="@+id/about_info"
         android:background="@android:color/background_light"
         android:textColor="#000000"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="文档加载中……"
-        android:scrollbars="vertical"
+        android:text="文档加载中……">
 
-        />
+    </TextView>
+        <!--android:scrollbars="vertical"-->
 
-    <!--</ScrollView> -->
+    </com.example.yugao.homework_try1.ObservableScrollView>
 
 
 </LinearLayout>
