@@ -31,10 +31,11 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private MyHandler myHandler;
-    TextView tv;
+//    TextView tv;
     String Book1Content = "oops";
     SpannableStringBuilder[] ssbArray = new SpannableStringBuilder[6];
     ObservableScrollView sv;
+    ArrayList<String> dividedstring;
 
 
     public static String getString(InputStream inputStream){
@@ -245,14 +246,21 @@ public class MainActivity extends ActionBarActivity
 
             seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
             seekbar.setOnSeekBarChangeListener(this);
-            tv = (TextView)rootView.findViewById(R.id.about_info);
+            //tv = (TextView)rootView.findViewById(R.id.about_info);
+            sv = (ObservableScrollView)rootView.findViewById(R.id.scrollView);
+
+            sv.textView = (TextView)rootView.findViewById(R.id.about_info);
+
             //tv.setMovementMethod(ScrollingMovementMethod.getInstance());
 
             //tv.setText(savedInstanceState.getString(arguments));
 //            if(getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
-            tv.setText(getArguments().getString(arguments));
-
-            sv = (ObservableScrollView)rootView.findViewById(R.id.scrollView);
+            dividedstring = DivideString(getArguments().getString(arguments));
+            sv.textView.setText(dividedstring.get(0));
+            if(dividedstring.size()>1){
+                //dividedstring = (ArrayList<String>) dividedstring.subList(1,dividedstring.size());
+                dividedstring.remove(0);
+            }
             sv.setScrollViewListener(this);
 
 
@@ -274,7 +282,7 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             //Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
-            tv.setText(ssbArray[seekBar.getProgress()]);
+            sv.textView.setText(ssbArray[seekBar.getProgress()]);
             //Log.v(getClass().toString(),ssbArray[seekBar.getProgress()].toString());
             //tv.setText(""+seekBar.getProgress());
 
@@ -293,13 +301,24 @@ public class MainActivity extends ActionBarActivity
 
         @Override
         public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+
             if(scrollView == sv){
+                double percentage =Double.valueOf(scrollView.getScrollY()) / scrollView.getChildAt(0).getHeight();
+                Log.v(getClass().toString(),"display percentage "+ Double.valueOf(scrollView.getScrollY()) / (scrollView.getChildAt(0).getHeight()) + "%");
+                //sv.StringArrayList = (ArrayList)sv.StringArrayList.subList(1,sv.StringArrayList.size());
 
-                Log.v(getClass().toString(),"old coord x "+x + "old coord y "+y);
-                Log.v(getClass().toString(),"total y value " + scrollView.getMaxScrollAmount() );
-                Log.v(getClass().toString(),"current percent " + y / scrollView.getMaxScrollAmount()+"%" );
-
+                if(percentage > 0.6){
+                    //scrollView.textView.setText("超过了80%");
+                    if(dividedstring != null){
+                        scrollView.textView.append(dividedstring.get(0));
+                        //dividedstring = (ArrayList<String>)dividedstring.subList(1,dividedstring.size());
+                        dividedstring.remove(0);
+                    }
+                }
+            } else {
+                Log.v(getClass().toString(), "scrollView is not sv");
             }
+
         }
     }
     class MyHandler extends Handler {
@@ -362,9 +381,9 @@ public class MainActivity extends ActionBarActivity
 
     public ArrayList<String> DivideString(String string){
         ArrayList<String> dividedString = new ArrayList<>();
-        while(string.length()>=5){
-            dividedString.add(string.substring(0,5));
-            string = string.substring(5,string.length());
+        while(string.length()>=2000){
+            dividedString.add(string.substring(0,2000));
+            string = string.substring(2000,string.length());
         }
         if(string != "") {
             dividedString.add(string);
