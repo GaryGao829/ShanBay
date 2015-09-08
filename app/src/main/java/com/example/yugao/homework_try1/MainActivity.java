@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity
 
     private MyHandler myHandler;
 //    TextView tv;
-    String Book1Content = "oops";
+    String Book1Content = "选择左侧导航栏加载文章";
     SpannableStringBuilder[] ssbArray = new SpannableStringBuilder[6];
     ObservableScrollView sv;
     ArrayList<String> dividedstring;
@@ -256,7 +256,8 @@ public class MainActivity extends ActionBarActivity
             //tv.setText(savedInstanceState.getString(arguments));
 //            if(getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
             dividedstring = DivideString(getArguments().getString(arguments));
-            sv.textView.setText(dividedstring.get(0));
+            //sv.textView.setText(dividedstring.get(0));
+            sv.textView.setText(findwords.highlightByDifficulty2(0,dividedstring.get(0)));
             if(dividedstring.size()>1){
                 //dividedstring = (ArrayList<String>) dividedstring.subList(1,dividedstring.size());
                 dividedstring.remove(0);
@@ -281,8 +282,12 @@ public class MainActivity extends ActionBarActivity
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            //Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
-            sv.textView.setText(ssbArray[seekBar.getProgress()]);
+            Log.v(getClass().toString(),"onProgressChanged");
+            Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
+            String stringToBeSpannabled = sv.textView.getText().toString();
+
+            sv.textView.setText(findwords.highlightByDifficulty2(seekBar.getProgress(),stringToBeSpannabled));
+            //sv.textView.setText(ssbArray[seekBar.getProgress()]);
             //Log.v(getClass().toString(),ssbArray[seekBar.getProgress()].toString());
             //tv.setText(""+seekBar.getProgress());
 
@@ -310,7 +315,9 @@ public class MainActivity extends ActionBarActivity
                 if(percentage > 0.6){
                     //scrollView.textView.setText("超过了80%");
                     if(dividedstring != null){
-                        scrollView.textView.append(dividedstring.get(0));
+                        scrollView.textView.append(findwords.highlightByDifficulty2(seekbar.getProgress(),dividedstring.get(0)));
+                        //scrollView.textView.append(dividedstring.get(0));
+
                         //dividedstring = (ArrayList<String>)dividedstring.subList(1,dividedstring.size());
                         dividedstring.remove(0);
                     }
@@ -354,14 +361,15 @@ public class MainActivity extends ActionBarActivity
                 //这样就没有输出 换成WordlistinputStream就有输出
                 //Log.v(getClass().toString(), MainActivity.getString(getResources().openRawResource(R.raw.book1)));
 
+                findwords.preProcessWordlist(WordlistinputStream);
 
+//                Log.v(this.getClass().toString(), "开始处理SpannableStringBuilder");
+//                for(int i = 0;i<1;i++){
+//                    ssbArray[i] = findwords.highlightByDifficulty(i,getResources().openRawResource(R.raw.book1));
+//                    Log.v(getClass().toString(),"第" + i + "spannableString");
+//                }
+//                Log.v(getClass().toString(), "处理SpannableStringBuilder 完毕");
 
-                Log.v(this.getClass().toString(), "开始处理SpannableStringBuilder");
-                for(int i = 0;i<1;i++){
-                    ssbArray[i] = findwords.highlightByDifficulty(i,getResources().openRawResource(R.raw.book1));
-                    Log.v(getClass().toString(),"第" + i + "spannableString");
-                }
-                Log.v(getClass().toString(), "处理SpannableStringBuilder 完毕");
 //                if(ssbArray[0] != null) {
 //                    Log.v(getClass().toString(), "ssbArray[0] 的内容是 " + ssbArray[0].toString());
 //                }

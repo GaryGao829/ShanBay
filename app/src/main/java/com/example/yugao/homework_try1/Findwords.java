@@ -1,7 +1,6 @@
 package com.example.yugao.homework_try1;
 
 import android.graphics.Color;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
@@ -11,7 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Created by yugao on 15/8/28.
@@ -23,7 +21,9 @@ public class Findwords {
     ArrayList<String> word3 = new ArrayList<>();
     ArrayList<String> word4 = new ArrayList<>();
     ArrayList<String> word5 = new ArrayList<>();
-    ArrayList allword[] = {word0,word1,word2,word3,word4,word5};
+    ArrayList<String> word6 = new ArrayList<>();
+
+    ArrayList allword[] = {word0,word1,word2,word3,word4,word5,word6};
 
 
     public void preProcessWordlist(InputStream wordInputStream){
@@ -52,6 +52,7 @@ public class Findwords {
                     case "3":allword[3].add(linesplit[0]);
                     case "4":allword[4].add(linesplit[0]);
                     case "5":allword[5].add(linesplit[0]);
+                    case "6":allword[6].add(linesplit[0]);
                     default:{
                         //Log.v("wordlist","wordlist read error "+line);
                     }
@@ -80,24 +81,46 @@ public class Findwords {
 //        }
 //        return sb.toString();
 //    }
-    public SpannableStringBuilder highlightByDifficulty(int difficulty,InputStream inputStream){
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("");
-        ArrayList<String> wordlistByCertainDifficult = allword[difficulty];
-        Scanner sc = new Scanner(inputStream,"utf-8");
-        while(sc.hasNext()){
-            String word = sc.next();
 
-            if(wordlistByCertainDifficult.contains(word)){
-                SpannableString tmp = new SpannableString(word);
-                tmp.setSpan(new BackgroundColorSpan(Color.GREEN),0,word.length(),Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.append(tmp);
-            }else {
-                SpannableString tmp = new SpannableString(word);
-                tmp.setSpan(new BackgroundColorSpan(Color.RED),0,word.length(),Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.append(tmp);
+
+//    public SpannableStringBuilder highlightByDifficulty(int difficulty,InputStream inputStream){
+//        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("");
+//        ArrayList<String> wordlistByCertainDifficult = allword[difficulty];
+//        Scanner sc = new Scanner(inputStream,"utf-8");
+//        while(sc.hasNext()){
+//            String word = sc.next();
+//
+//            if(wordlistByCertainDifficult.contains(word)){
+//                SpannableString tmp = new SpannableString(word);
+//                tmp.setSpan(new BackgroundColorSpan(Color.GREEN),0,word.length(),Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//                spannableStringBuilder.append(tmp);
+//            }else {
+//                SpannableString tmp = new SpannableString(word);
+//                tmp.setSpan(new BackgroundColorSpan(Color.RED),0,word.length(),Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//                spannableStringBuilder.append(tmp);
+//            }
+//        }
+//        return spannableStringBuilder;
+//    }
+
+    public SpannableStringBuilder highlightByDifficulty2(int difficulty,String string){
+        SpannableStringBuilder result = new SpannableStringBuilder(string);
+        ArrayList<String> wordlist = allword[difficulty];
+        for(int i = 0;i<wordlist.size();i++){
+            String word = wordlist.get(i);
+
+            int start = string.indexOf(word);
+            while(start != -1){
+                int end = start + word.length();
+
+                if(start>1 &&  string.charAt(start-1)==' '    && string.charAt(end) == ' '){
+                    result.setSpan(new BackgroundColorSpan(Color.GREEN),start,end,Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                }
+                start = string.indexOf(word,end);
             }
+
         }
-        return spannableStringBuilder;
+        return result;
     }
 
 }
