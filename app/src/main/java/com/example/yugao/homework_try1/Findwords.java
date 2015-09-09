@@ -113,7 +113,7 @@ public class Findwords {
             while(start != -1){
                 int end = start + word.length();
 
-                if(start>1 &&  string.charAt(start-1)==' '    && string.charAt(end) == ' '){
+                if(start>1 &&  (string.charAt(start-1)==' ' || string.charAt(start-1) == '\n') && (string.charAt(end) == ' ' || string.charAt(end) == '\n' )){
                     result.setSpan(new BackgroundColorSpan(Color.GREEN),start,end,Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 }
                 start = string.indexOf(word,end);

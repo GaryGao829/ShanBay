@@ -5,15 +5,13 @@ import android.util.AttributeSet;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 /**
  * Created by yugao on 15/9/8.
  */
 public class ObservableScrollView extends ScrollView{
     private ScrollViewListener scrollViewListener = null;
     TextView textView;
-    ArrayList<String> StringArrayList;
+    //ArrayList<String> StringArrayList;
 
 
     public ObservableScrollView(Context context) {

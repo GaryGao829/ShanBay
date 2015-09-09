@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class MainActivity extends ActionBarActivity
     SpannableStringBuilder[] ssbArray = new SpannableStringBuilder[6];
     ObservableScrollView sv;
     ArrayList<String> dividedstring;
-
+    Toast toast;
 
     public static String getString(InputStream inputStream){
         InputStreamReader inputStreamReader = null;
@@ -216,7 +217,7 @@ public class MainActivity extends ActionBarActivity
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 
-            args.putString(arguments,"Section test"+sectionNumber);
+            args.putString(arguments,"Book "+sectionNumber +" Content " );
             if(sectionNumber == 1){
                 args.putString(arguments,Book1Content);
                 //MyThread myThread = new MyThread();
@@ -279,12 +280,13 @@ public class MainActivity extends ActionBarActivity
 
         }
 
-
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            Log.v(getClass().toString(),"onProgressChanged");
+            Log.v(getClass().toString(), "onProgressChanged");
             Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
             String stringToBeSpannabled = sv.textView.getText().toString();
+            Toast.makeText(getApplicationContext(),"高亮难度级别为"+seekBar.getProgress()+"及其以下的单词",Toast.LENGTH_SHORT).show();
+
 
             sv.textView.setText(findwords.highlightByDifficulty2(seekBar.getProgress(),stringToBeSpannabled));
             //sv.textView.setText(ssbArray[seekBar.getProgress()]);
