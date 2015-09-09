@@ -314,13 +314,15 @@ public class MainActivity extends ActionBarActivity
                 Log.v(getClass().toString(),"display percentage "+ Double.valueOf(scrollView.getScrollY()) / (scrollView.getChildAt(0).getHeight()) + "%");
                 //sv.StringArrayList = (ArrayList)sv.StringArrayList.subList(1,sv.StringArrayList.size());
 
-                if(percentage > 0.6){
+                if(percentage > 0.8){
                     //scrollView.textView.setText("超过了80%");
-                    if(dividedstring != null){
-                        scrollView.textView.append(findwords.highlightByDifficulty2(seekbar.getProgress(),dividedstring.get(0)));
+                    if(dividedstring.size() > 0) {
+                        if (dividedstring.get(0) != null) {
+                           scrollView.textView.append(findwords.highlightByDifficulty2(seekbar.getProgress(), dividedstring.get(0)));
+                        }
                         //scrollView.textView.append(dividedstring.get(0));
-
                         //dividedstring = (ArrayList<String>)dividedstring.subList(1,dividedstring.size());
+
                         dividedstring.remove(0);
                     }
                 }
@@ -391,9 +393,10 @@ public class MainActivity extends ActionBarActivity
 
     public ArrayList<String> DivideString(String string){
         ArrayList<String> dividedString = new ArrayList<>();
-        while(string.length()>=2000){
-            dividedString.add(string.substring(0,2000));
-            string = string.substring(2000,string.length());
+        dividedString.ensureCapacity(100);
+        while(string.length()>=10000){
+            dividedString.add(string.substring(0,10000));
+            string = string.substring(10000,string.length());
         }
         if(string != "") {
             dividedString.add(string);
