@@ -21,6 +21,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +39,7 @@ public class MainActivity extends ActionBarActivity
     SpannableStringBuilder[] ssbArray = new SpannableStringBuilder[6];
     ObservableScrollView sv;
     ArrayList<String> dividedstring;
-    Toast toast;
+    JSONArray book1JSON;
 
     public static String getString(InputStream inputStream){
         InputStreamReader inputStreamReader = null;
@@ -367,6 +369,10 @@ public class MainActivity extends ActionBarActivity
 
                 findwords.preProcessWordlist(WordlistinputStream);
 
+                Log.v(getClass().toString(),"即将处理JSON");
+                book1JSON = BookPreProcessor.BookStringToJson(Book1Content);
+                Log.v("预处理之后的BookJson", book1JSON.get(book1JSON.length()-1).toString());
+
 //                Log.v(this.getClass().toString(), "开始处理SpannableStringBuilder");
 //                for(int i = 0;i<1;i++){
 //                    ssbArray[i] = findwords.highlightByDifficulty(i,getResources().openRawResource(R.raw.book1));
@@ -384,8 +390,7 @@ public class MainActivity extends ActionBarActivity
 
             Message msg = new Message();
             Bundle b = new Bundle();
-            b.putString("BookContent",Book1Content);
-
+            b.putString("BookContent", Book1Content);
             msg.setData(b);
             MainActivity.this.myHandler.sendMessage(msg);
         }
