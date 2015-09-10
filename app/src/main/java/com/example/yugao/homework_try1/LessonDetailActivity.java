@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +53,7 @@ public class LessonDetailActivity extends ActionBarActivity implements SeekBar.O
             e.printStackTrace();
         }
         //this.getWindow().setTitle("Lesson: " + String.valueOf(intent.getIntExtra("LessonNumber",0)+1));
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_lesson_detail);
 
         viewPager = (ViewPager)findViewById(R.id.viewpager);
