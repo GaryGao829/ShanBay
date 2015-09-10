@@ -450,11 +450,11 @@ public class MainActivity extends ActionBarActivity
      * @return new SpannableString
      */
     private SpannableString getClickableSpan(String stringTobeSpannable){
-        final String source = new String(stringTobeSpannable);
+        final String source = new String(stringTobeSpannable).trim();
 
         View.OnClickListener onClickListener = new View.OnClickListener(){
             public void onClick(View v){
-                Toast.makeText(MainActivity.this, source + "Click success",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, source ,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this,LessonDetailActivity.class);
                 intent.putExtra("Lesson Number",source);
                 //int index = Integer.valueOf(source.trim().charAt(0)) - 48;
