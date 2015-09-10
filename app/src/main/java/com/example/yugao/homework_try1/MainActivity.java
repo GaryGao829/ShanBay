@@ -1,6 +1,7 @@
 package com.example.yugao.homework_try1;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,18 +11,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -200,8 +205,9 @@ public class MainActivity extends ActionBarActivity
 
 
 
-    class PlaceholderFragment extends Fragment implements SeekBar.OnSeekBarChangeListener,ScrollViewListener{
-        private SeekBar seekbar;
+    class PlaceholderFragment extends Fragment implements ScrollViewListener{
+            //,SeekBar.OnSeekBarChangeListener{
+       // private SeekBar seekbar;
         private static final String arguments = "test";
         /**
          * The fragment argument representing the section number for this
@@ -219,13 +225,12 @@ public class MainActivity extends ActionBarActivity
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 
-            args.putString(arguments,"Book "+sectionNumber +" Content " );
-            if(sectionNumber == 1){
-                args.putString(arguments,Book1Content);
-                //MyThread myThread = new MyThread();
-                //new Thread(myThread).start();
-
-            }
+            args.putString(arguments,String.valueOf(sectionNumber));
+//            if(sectionNumber == 1){
+//                args.putString(arguments,Book1Content);
+//                //MyThread myThread = new MyThread();
+//                //new Thread(myThread).start();
+//            }
             fragment.setArguments(args);
             return fragment;
         }
@@ -247,24 +252,50 @@ public class MainActivity extends ActionBarActivity
 //                e.printStackTrace();
 //            }
 
-            seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
-            seekbar.setOnSeekBarChangeListener(this);
+//            seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
+//            seekbar.setOnSeekBarChangeListener(this);
             //tv = (TextView)rootView.findViewById(R.id.about_info);
             sv = (ObservableScrollView)rootView.findViewById(R.id.scrollView);
-
             sv.textView = (TextView)rootView.findViewById(R.id.about_info);
 
             //tv.setMovementMethod(ScrollingMovementMethod.getInstance());
 
             //tv.setText(savedInstanceState.getString(arguments));
 //            if(getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
-            dividedstring = DivideString(getArguments().getString(arguments));
-            //sv.textView.setText(dividedstring.get(0));
-            sv.textView.setText(findwords.highlightByDifficulty2(0,dividedstring.get(0)));
-            if(dividedstring.size()>1){
-                //dividedstring = (ArrayList<String>) dividedstring.subList(1,dividedstring.size());
-                dividedstring.remove(0);
+
+            //dividedstring = DivideString(getArguments().getString(arguments));
+
+            if(getArguments().getString(arguments) == "1" && book1JSON != null){
+
+                for(int i = 0;i<book1JSON.length();i++) {
+
+                    try {
+                        String tmp = String.valueOf(i+1) +". "+ book1JSON.getJSONObject(i).getString("title") + "\n\n";
+
+                        if(i == 0){
+                            sv.textView.setText(getClickableSpan(tmp));
+                        }else {
+                            //sv.textView.append(String.valueOf(i+1)+". "+tmp);
+                            //Log.v(getClass().toString(),"going to set clickable text");
+                            sv.textView.append(getClickableSpan(tmp));
+                            sv.textView.setMovementMethod(LinkMovementMethod.getInstance());
+                            //Log.v(getClass().toString(), "set clickable text done");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+
+
+            //dividedstring = DivideString(Book1Content);
+            //sv.textView.setText(findwords.highlightByDifficulty2(0,dividedstring.get(0)));
+            //if(dividedstring.size()>1){
+                //dividedstring = (ArrayList<String>) dividedstring.subList(1,dividedstring.size());
+             //   dividedstring.remove(0);
+            //}
+            //sv.textView.setClickable(true);
+
             sv.setScrollViewListener(this);
 
 
@@ -282,55 +313,56 @@ public class MainActivity extends ActionBarActivity
 
         }
 
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            Log.v(getClass().toString(), "onProgressChanged");
-            Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
-            String stringToBeSpannabled = sv.textView.getText().toString();
-            Toast.makeText(getApplicationContext(),"高亮难度级别为"+seekBar.getProgress()+"及其以下的单词",Toast.LENGTH_SHORT).show();
-
-
-            sv.textView.setText(findwords.highlightByDifficulty2(seekBar.getProgress(),stringToBeSpannabled));
-            //sv.textView.setText(ssbArray[seekBar.getProgress()]);
-            //Log.v(getClass().toString(),ssbArray[seekBar.getProgress()].toString());
-            //tv.setText(""+seekBar.getProgress());
-
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-
+//        @Override
+//        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//            Log.v(getClass().toString(), "onProgressChanged");
+//            Log.v(LOG_TAG, "高亮难度为" + String.valueOf(seekBar.getProgress()) + "以下的单词");
+//            String stringToBeSpannabled = sv.textView.getText().toString();
+//            Toast.makeText(getApplicationContext(),"高亮难度级别为"+seekBar.getProgress()+"及其以下的单词",Toast.LENGTH_SHORT).show();
+//
+//
+//            sv.textView.setText(findwords.highlightByDifficulty2(seekBar.getProgress(),stringToBeSpannabled));
+//
+//            //sv.textView.setText(ssbArray[seekBar.getProgress()]);
+//            //Log.v(getClass().toString(),ssbArray[seekBar.getProgress()].toString());
+//            //tv.setText(""+seekBar.getProgress());
+//
+//        }
+//
+//        @Override
+//        public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//        }
+//
+//        @Override
+//        public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//        }
+//
 
         @Override
         public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
 
-            if(scrollView == sv){
-                double percentage =Double.valueOf(scrollView.getScrollY()) / scrollView.getChildAt(0).getHeight();
-                Log.v(getClass().toString(),"display percentage "+ Double.valueOf(scrollView.getScrollY()) / (scrollView.getChildAt(0).getHeight()) + "%");
-                //sv.StringArrayList = (ArrayList)sv.StringArrayList.subList(1,sv.StringArrayList.size());
-
-                if(percentage > 0.8){
-                    //scrollView.textView.setText("超过了80%");
-                    if(dividedstring.size() > 0) {
-                        if (dividedstring.get(0) != null) {
-                           scrollView.textView.append(findwords.highlightByDifficulty2(seekbar.getProgress(), dividedstring.get(0)));
-                        }
-                        //scrollView.textView.append(dividedstring.get(0));
-                        //dividedstring = (ArrayList<String>)dividedstring.subList(1,dividedstring.size());
-
-                        dividedstring.remove(0);
-                    }
-                }
-            } else {
-                Log.v(getClass().toString(), "scrollView is not sv");
-            }
+//            if(scrollView == sv){
+//                double percentage =Double.valueOf(scrollView.getScrollY()) / scrollView.getChildAt(0).getHeight();
+//                Log.v(getClass().toString(),"display percentage "+ Double.valueOf(scrollView.getScrollY()) / (scrollView.getChildAt(0).getHeight()) + "%");
+//                //sv.StringArrayList = (ArrayList)sv.StringArrayList.subList(1,sv.StringArrayList.size());
+//
+//                if(percentage > 0.8){
+//                    //scrollView.textView.setText("超过了80%");
+//                    if(dividedstring.size() > 0) {
+//                        if (dividedstring.get(0) != null) {
+//                           scrollView.textView.append(findwords.highlightByDifficulty2(seekbar.getProgress(), dividedstring.get(0)));
+//                        }
+//                        //scrollView.textView.append(dividedstring.get(0));
+//                        //dividedstring = (ArrayList<String>)dividedstring.subList(1,dividedstring.size());
+//
+//                        dividedstring.remove(0);
+//                    }
+//                }
+//            } else {
+//                Log.v(getClass().toString(), "scrollView is not sv");
+//            }
 
         }
     }
@@ -371,7 +403,8 @@ public class MainActivity extends ActionBarActivity
 
                 Log.v(getClass().toString(),"即将处理JSON");
                 book1JSON = BookPreProcessor.BookStringToJson(Book1Content);
-                Log.v("预处理之后的BookJson", book1JSON.get(book1JSON.length()-1).toString());
+                Log.v(getClass().toString(),"BOOKJSON 处理完毕");
+                //Log.v("预处理之后的BookJson", book1JSON.get(book1JSON.length()-1).toString());
 
 //                Log.v(this.getClass().toString(), "开始处理SpannableStringBuilder");
 //                for(int i = 0;i<1;i++){
@@ -390,7 +423,8 @@ public class MainActivity extends ActionBarActivity
 
             Message msg = new Message();
             Bundle b = new Bundle();
-            b.putString("BookContent", Book1Content);
+            //b.putString("BookContent", Book1Content);
+
             msg.setData(b);
             MainActivity.this.myHandler.sendMessage(msg);
         }
@@ -410,4 +444,57 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+    /**
+     * 把字符串变成Spannable的，并且添加点击监听器
+     * @param stringTobeSpannable
+     * @return new SpannableString
+     */
+    private SpannableString getClickableSpan(String stringTobeSpannable){
+        final String source = new String(stringTobeSpannable);
+
+        View.OnClickListener onClickListener = new View.OnClickListener(){
+            public void onClick(View v){
+                Toast.makeText(MainActivity.this, source + "Click success",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this,LessonDetailActivity.class);
+                intent.putExtra("Lesson Number",source);
+                //int index = Integer.valueOf(source.trim().charAt(0)) - 48;
+                String[] tmpArray= source.trim().split("\\.");
+                int index = Integer.valueOf(tmpArray[0]) - 1;
+
+                Log.v("Source is ",source);
+                Log.v("index is " , ""+index);
+                String StringOfJSON = "";
+
+                if (index >= 0 && index < book1JSON.length()) {
+                    try {
+                         StringOfJSON = book1JSON.getJSONObject(index).toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                intent.putExtra("LessonNumber",index);
+                intent.putExtra("JSONString",StringOfJSON);
+                MainActivity.this.startActivity(intent);
+            }
+        };
+
+        SpannableString sps = new SpannableString(stringTobeSpannable);
+        sps.setSpan(new Clickable(onClickListener),0,stringTobeSpannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        return sps;
+
+    }
+
+    class Clickable extends ClickableSpan implements View.OnClickListener{
+        private final View.OnClickListener mListener;
+
+        public Clickable(View.OnClickListener onClickListener){
+            mListener = onClickListener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            mListener.onClick(view);
+        }
+
+    }
 }

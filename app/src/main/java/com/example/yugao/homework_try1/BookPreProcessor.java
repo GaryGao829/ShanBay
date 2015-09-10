@@ -28,19 +28,26 @@ public class BookPreProcessor {
             String lessonString = book.substring(lessonStart, lessonEnd);
             int titleStart = lessonString.indexOf("Lesson") + 14;
             int titleEnd = lessonString.indexOf("First listen");
-            //String title = lessonString.substring(titleStart, titleEnd);
+            String title = lessonString.substring(titleStart, titleEnd).trim().replaceFirst("\\n", " ");
+            StringBuffer titlesb = new StringBuffer("");
+            String titlearray[] = title.split(" "+" *");
+            for(int i =0 ; i < titlearray.length;i++){
+                titlesb.append(titlearray[i]).append(" ");
+            }
+            String title2 = titlesb.substring(0,titlesb.length()-1);
+
             int mainStart = titleEnd;
             int mainEnd = lessonString.indexOf("New words");
-            //String main = lessonString.substring(mainStart, mainEnd);
+            String main = lessonString.substring(mainStart, mainEnd).trim();
             int newWordStart = mainEnd;
             int newWordEnd = lessonString.indexOf("参考译文");
-            //String newWord= lessonString.substring(newWordStart, newWordEnd);
-            //String translation = lessonString.substring(newWordEnd,lessonString.length());
+            String newWord= lessonString.substring(newWordStart, newWordEnd).trim();
+            String translation = lessonString.substring(newWordEnd,lessonString.length()).trim();
             try {
-                lessonJsonObject.put("title",lessonString.substring(titleStart, titleEnd));
-                lessonJsonObject.put("main",lessonString.substring(mainStart, mainEnd));
-                lessonJsonObject.put("newWord",lessonString.substring(newWordStart, newWordEnd));
-                lessonJsonObject.put("translation",lessonString.substring(newWordEnd,lessonString.length()));
+                lessonJsonObject.put("title",title2);
+                lessonJsonObject.put("main",main);
+                lessonJsonObject.put("newWord",newWord);
+                lessonJsonObject.put("translation",translation);
 
                 allLessonsJsonArray.put(lessonJsonObject);
             } catch (JSONException e) {

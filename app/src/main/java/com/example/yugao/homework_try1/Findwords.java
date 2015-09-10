@@ -25,7 +25,6 @@ public class Findwords {
 
     ArrayList allword[] = {word0,word1,word2,word3,word4,word5,word6};
 
-
     public void preProcessWordlist(InputStream wordInputStream){
         InputStreamReader inputStreamReader = null;
         try{
